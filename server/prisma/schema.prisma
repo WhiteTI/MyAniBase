@@ -10,3 +10,30 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id       String    @id @default(ulid())
+  name     String
+  username String    @unique
+  image    String?
+  password String
+  session  Session[]
+
+  createAt DateTime @default(now()) @map("create_at")
+  updateAt DateTime @updatedAt @map("update_at")
+
+  @@map("user")
+}
+
+model Session {
+  id         String @id @default(ulid())
+  secretHash String
+
+  userId String?
+  User   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createAt DateTime @default(now()) @map("create_at")
+  updateAt DateTime @updatedAt @map("update_at")
+
+  @@map("session")
+}
